@@ -1,0 +1,25 @@
+{
+  "name": "Europarl",
+  "version": "0.1.0",
+  "productName": "Europarl",
+  "description": "Helper to generate CSV file from PDF results of votes.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . --platform=darwin --arch=x64  --icon './assets/icns/europarl.icns'",
+    "deploy": "electron-installer-dmg ./europarl-darwin-x64/europarl.app europarl --icon './assets/icns/europarl-dmg.icns'"
+  },
+  "author": "Gautier Morel",
+  "dependencies": {
+    "electron-progressbar": "^1.2.0",
+    "pdf2json": "^1.1.8"
+  },
+  "devDependencies": {
+    "electron-installer-dmg": "^3.0.0",
+    "electron-packager": "^7.3.0",
+    "electron-prebuilt": "^1.2.0",
+    "eslint": "^3.1.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.11.1"
+  }
+}

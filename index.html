@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="foundation.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="row">
+        <div class="header">
+            <img class="logo" src="assets/header_icon_eplogo_new.png" alt="ep logo">
+            <div class="header-divider"></div>
+            <span class="header-title">European Parliament Plenary</span>
+        </div>
+
+        <div class="content">
+            <form class="form1">
+                <div class="row title">
+                    <div class="title-icon"></div>
+                    <div>Import PDF vote file</div>
+                </div>
+                <div class="row">
+                    <div class="medium-12 columns">
+                        <label>
+                            PDF
+                            <span class="input-group">
+                                <input class="input-group-field" type="text" name="source" placeholder="PV-X-20XX-XX-XX-RCV_FR">
+                                <span class="input-group-button">
+                                    <button class="button" type="button" id="chooseSource">Choose PDF File</button>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="medium-12 columns">
+                        <button class="large expanded button" type="submit">Let's Go !</button>
+                    </div>
+                </div>
+            </form>
+
+            <form class="form2 hide">
+                <div class="row title">
+                    <div class="title-icon"></div>
+                    <div>Select your(s) amendment(s)</div>
+                </div>
+
+                <div class="row">
+                    <div id="amendments-checkboxes"></div>
+                </div>
+
+                <div class="row">
+                    <div class="medium-12 columns">
+                        <button class="large expanded button" type="submit">Get votes results</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="results"></div>
+        </div>
+    </div>
+
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+</script>
+
+</html>
