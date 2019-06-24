@@ -36,11 +36,6 @@ ipcRenderer.on('did-finish-load', () => {
 });
 
 ipcRenderer.on('processing-did-succeed', (event, amendments) => {
-	// variables.results.innerHTML = html;
-
-	// console.log('checkboxes=', checkboxes);
-
-	// checkboxes.amendments = html;
 	variables.amendments = amendments;
 	let amendmentsNames = amendments.map(a => a.name);
 	let count = 0;
@@ -74,11 +69,18 @@ ipcRenderer.on('processing-did-succeed', (event, amendments) => {
 	}
 });
 
-ipcRenderer.on('generator-did-succeed', (event, votes) => {
-	variables.results.innerHTML = `
-	<p>PRO: ${votes.proDeputies.length}</p>
-	<p>AGAINST: ${votes.againstDeputies.length}</p>
-	<p>ABS: ${votes.abstentionDeputies.length}</p>`;
+ipcRenderer.on('generator-did-succeed', (e, votes) => {
+	variables.results.innerHTML = '<p>Generated:</p>\n';
+
+	for (let i = 0; i < votes.length; i++) {
+		let { amendmentName, proDeputies, againstDeputies, abstentionDeputies } = votes[i];
+		variables.results.innerHTML += `
+		<p>Amendment Name: ${amendmentName}</p>
+		<p>>> + : ${proDeputies.length}</p>
+		<p>>> - : ${againstDeputies.length}</p>
+		<p>>> 0 : ${abstentionDeputies.length}</p>
+		<p>-----------------------------------</p>`;
+	}
 });
 
 ipcRenderer.on('csv-did-succeed', (event, file) => {
@@ -92,7 +94,11 @@ ipcRenderer.on('processing-did-fail', (event, error) => {
 
 buttons.source.addEventListener('click', () => {
 	const file = dialog.showOpenDialog({
-		properties: ['openFile']
+		properties: ['openFile'],
+		filters: [{
+			name: 'PDF',
+			extensions: ['pdf']
+		}]
 	});
 	if (file) {
 		inputs.source.value = file;
@@ -117,9 +123,5 @@ formGenerator.addEventListener('submit', (event) => {
 		if (checkbox.checked) amendments.push(current);
 	}
 
-	ipcRenderer.send('did-submit-form2', {
-		name: amendments[0].name,
-		pageStart: amendments[0].pageStart,
-		pageEnd: amendments[0].pageEnd
-	});
+	ipcRenderer.send('did-submit-form2', amendments);
 });

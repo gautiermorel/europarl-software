@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const PDFParser = require('pdf2json');
+const xml2js = require('xml2js');
 
 let pdfParser = new PDFParser();
 
@@ -31,8 +32,6 @@ module.exports = class Parser {
 		let extension = path.extname(file);
 		this.DOCUMENT_NAME = path.basename(file, extension);
 		this.DIR_NAME = path.dirname(file);
-
-		console.log('DOCUMENT_NAME', this.DOCUMENT_NAME);
 
 		return new Promise((resolve, reject) => {
 			fs.readFile(file, (err, pdfBuffer) => {
@@ -124,42 +123,77 @@ module.exports = class Parser {
 			againstDeputies = ob.minus.split(',').filter(d => d !== '').map(d => d.trim());
 			abstentionDeputies = ob.zero.split(',').filter(d => d !== '').map(d => d.trim());
 
-			return resolve({ proDeputies, againstDeputies, abstentionDeputies });
+			return resolve({ amendmentName, proDeputies, againstDeputies, abstentionDeputies });
+		})
+	}
+
+	getDeputiesNames() {
+		return new Promise((resolve, reject) => {
+			let parser = new xml2js.Parser();
+			fs.readFile(`${__dirname}/deputies.xml`, function (err, data) {
+				parser.parseString(data, function (err, res) {
+					let { mep: deputies = [] } = (res && res.meps) || {}
+
+					// for (let i = 0; i < deputies.length; i++) {
+					// 	let deputy = deputies[i];
+					// }
+					deputies = deputies.map(d => d && d.fullname)
+					return resolve(deputies);
+				});
+			});
 		})
 	}
 
 	exportCSV(votes) {
 		return new Promise((resolve, reject) => {
-			let content = '';
-			let i = 0;
+			this.getDeputiesNames()
+				.then(deputies => {
+					let myExport = [];
 
-			do {
-				let deputy = votes.proDeputies[i];
-				deputy = deputy.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-				content += `${deputy};+;\n`
-				i++;
-			} while (votes.proDeputies[i]);
+					for (let i = 0; i < deputies.length; i++) {
+						if (i === 0) myExport.push(['Députés'])
+						let deputyFullName = deputies[i]
+						myExport.push([deputyFullName]);
+					}
 
-			i = 0;
-			do {
-				let deputy = votes.againstDeputies[i];
-				deputy = deputy.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-				content += `${deputy};-;\n`
-				i++;
-			} while (votes.againstDeputies[i]);
+					for (let i = 0; i < votes.length; i++) {
+						let { amendmentName = '', proDeputies, againstDeputies, abstentionDeputies } = votes[i];
 
-			i = 0;
-			do {
-				let deputy = votes.abstentionDeputies[i];
-				deputy = deputy.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-				content += `${deputy};0;\n`
-				i++;
-			} while (votes.abstentionDeputies[i]);
+						myExport[0].push(`,${amendmentName}`);
 
-			fs.appendFile(this.CSV_NAME, content, 'utf8', err => {
-				if (err) return reject(err);
-				return resolve('SAVED');
-			});
+						for (let j = 0; j < deputies.length; j++) {
+							let [deputyFullName] = deputies[j];
+							if (proDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) myExport[j + 1].push(',+');
+							else if (againstDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) myExport[j + 1].push(',-');
+							else if (abstentionDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) myExport[j + 1].push(',0');
+							else myExport[j + 1].push(',ABS');
+						}
+					}
+
+					let content = '';
+
+					for (let i = 0; i < myExport.length; i++) {
+						let cells = myExport[i];
+
+						for (let j = 0; j < cells.length; j++) {
+							let cell = cells[j];
+							content += cell;
+							if (j === cells.length - 1) content += '\n';
+						}
+					}
+
+					fs.appendFile(this.CSV_NAME, content, 'utf8', err => {
+						if (err) return reject(err);
+						return resolve('SAVED');
+					});
+				})
+				.catch(err => {
+					console.log('ERORR:', err);
+				})
 		})
+	}
+
+	normalize(str) {
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 	}
 }

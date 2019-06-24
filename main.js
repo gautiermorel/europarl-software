@@ -45,7 +45,6 @@ function handleSubmission() {
 
 		progressBar
 			.on('completed', function () {
-				console.info('completed...');
 				progressBar.detail = 'Task completed. Exiting...';
 			})
 			.on('aborted', function () {
@@ -53,34 +52,36 @@ function handleSubmission() {
 			});
 	});
 
-	ipcMain.on('did-submit-form2', (event, argument) => {
+	ipcMain.on('did-submit-form2', (event, amendments) => {
 		let progressBar = new ProgressBar({ text: 'Preparing data...', detail: 'Wait...' })
-
-		const { name, pageStart, pageEnd } = argument;
 
 		let csvName = parser.getFileName();
 
-		setTimeout(function () {
-			parser.createCSV(csvName)
-				.then(() => parser.getVotes(name, pageStart, pageEnd))
-				.then(votes => {
-					event.sender.send('generator-did-succeed', votes);
-					return parser.exportCSV(votes);
-				})
-				.then(() => {
-					progressBar.setCompleted();
-					event.sender.send('csv-did-succeed', `${csvName}.csv`)
-				})
-				.catch(err => {
-					progressBar.setCompleted();
-					console.log('ERROR: mail.js#did-submit-form2 - Error while exp:', err);
-					event.sender.send('processing-did-fail', err);
-				})
-		}, 3000);
+
+		let promises = [];
+		for (let i = 0; i < amendments.length; i++) {
+			let { name, pageStart, pageEnd } = amendments[i];
+			promises.push(parser.getVotes(name, pageStart, pageEnd))
+		}
+
+		parser.createCSV(csvName)
+			.then(() => Promise.all(promises))
+			.then(results => {
+				event.sender.send('generator-did-succeed', results);
+				return parser.exportCSV(results);
+			})
+			.then(() => {
+				progressBar.setCompleted();
+				event.sender.send('csv-did-succeed', `${csvName}.csv`)
+			})
+			.catch(err => {
+				progressBar.setCompleted();
+				console.log('ERROR: main.js#did-submit-form2 - Error while exp:', err);
+				event.sender.send('processing-did-fail', err);
+			})
 
 		progressBar
 			.on('completed', function () {
-				console.info('completed...');
 				progressBar.detail = 'Task completed. Exiting...';
 			})
 			.on('aborted', function () {
