@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const PDFParser = require('pdf2json');
 const xml2js = require('xml2js');
+const XLSX = require('xlsx');
 
 let pdfParser = new PDFParser();
 
@@ -16,6 +17,10 @@ module.exports = class Parser {
 
 	getFileName() {
 		return `${this.DIR_NAME}/${this.DOCUMENT_NAME}`;
+	}
+
+	getDocumentName() {
+		return this.DOCUMENT_NAME;
 	}
 
 	createCSV(csvName) {
@@ -184,12 +189,70 @@ module.exports = class Parser {
 
 					fs.appendFile(this.CSV_NAME, content, 'utf8', err => {
 						if (err) return reject(err);
-						return resolve('SAVED');
+						this.convertToXLSX()
+							.then(() => resolve('SAVED'))
+							.catch(err => reject(err))
 					});
 				})
 				.catch(err => {
 					console.log('ERORR:', err);
 				})
+		})
+	}
+
+	exportXLSX(votes) {
+		return new Promise((resolve, reject) => {
+			let fileName = this.getFileName();
+			let documentName = this.getDocumentName();
+			this.getDeputiesNames()
+				.then(deputies => {
+					let data = [];
+
+					for (let j = 0; j < deputies.length; j++) {
+						let [deputyFullName] = deputies[j];
+						let row = {};
+
+						for (let i = 0; i < votes.length; i++) {
+							let { amendmentName = '', proDeputies, againstDeputies, abstentionDeputies } = votes[i];
+
+							row['Députés'] = deputyFullName;
+							if (proDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) row[amendmentName] = '+';
+							else if (againstDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) row[amendmentName] = '-';
+							else if (abstentionDeputies.find(p => deputyFullName.match(new RegExp(p, 'i')))) row[amendmentName] = '0';
+							else row[amendmentName] = 'ABS';
+						}
+
+						data.push(row);
+					}
+
+					let ws = XLSX.utils.json_to_sheet(data);
+					let wb = XLSX.utils.book_new();
+
+					XLSX.utils.book_append_sheet(wb, ws, documentName);
+					XLSX.writeFile(wb, `${fileName}.xlsx`);
+					return resolve(true);
+				})
+		})
+	}
+
+	convertToXLSX(data) {
+		return new Promise((resolve, reject) => {
+			let fileName = this.getFileName();
+			// const workBook = XLSX.readFile(`${fileName}.csv`);
+			// XLSX.writeFile(workBook, `${fileName}.xlsx`, { bookType: 'csv' });
+
+			let data = [
+				{ name: 'John', city: 'Seattle' },
+				{ name: 'Mike', city: 'Los Angeles' },
+				{ name: 'Zach', city: 'New York' }
+			];
+
+			let ws = XLSX.utils.json_to_sheet(data);
+			let wb = XLSX.utils.book_new();
+
+			XLSX.utils.book_append_sheet(wb, ws, 'People');
+			XLSX.writeFile(wb, `${fileName}.xlsx`);
+			return resolve(true);
 		})
 	}
 

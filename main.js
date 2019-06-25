@@ -68,7 +68,7 @@ function handleSubmission() {
 			.then(() => Promise.all(promises))
 			.then(results => {
 				event.sender.send('generator-did-succeed', results);
-				return parser.exportCSV(results);
+				return parser.exportXLSX(results);
 			})
 			.then(() => {
 				progressBar.setCompleted();
