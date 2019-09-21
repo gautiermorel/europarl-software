@@ -1,0 +1,68 @@
+body {
+    cursor: default;
+}
+
+.checkbox-amendment {
+    color: red;
+}
+
+.header {
+    z-index: 3;
+    background-color: #0c385f;
+    border-bottom: 5px solid #E09707;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: fixed;
+    min-height: 115px;
+    max-height: 115px;
+}
+
+.header-divider {
+    width: 3px;
+    background-color: #E09707;
+    height: 60px;
+}
+
+.header-title {
+    font-size: 1.3rem;
+    color: white;
+    padding: 10px;
+}
+
+.logo {
+    height: 100%;
+    width: 110px;
+    padding: 10px;
+}
+
+.content {
+    z-index: 2;
+    position: relative;
+    margin-top: 150px;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.hide {
+    display: none;
+}
+
+.title-icon {
+    width: 15px;
+    height: 15px;
+    background-color: #0c385f;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.title {
+    font-size: 1.2rem;
+    color: #0c385f;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    align-items: center;
+}

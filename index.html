@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; child-src 'self';"> -->
+    <link rel="stylesheet" href="foundation.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="row">
+        <div class="header">
+            <img class="logo" src="assets/header_icon_eplogo_new.png" alt="ep logo">
+            <div class="header-divider"></div>
+            <span class="header-title">European Parliament Plenary</span>
+        </div>
+
+        <div class="content">
+            <form class="form-querying">
+                <div class="row title">
+                    <div class="title-icon"></div>
+                    <div>Choisir la date de la séance plénière:</div>
+                </div>
+                <div class="row">
+                    <select id="day-select"></select>
+                    <select id="month-select"></select>
+                    <select id="year-select"></select>
+                    <select id="pv-select"></select>
+                </div>
+                <div class="row">
+                    <div class="medium-12 columns">
+                        <button class="large expanded button" type="submit">Voir les amendements disponibles</button>
+                    </div>
+                </div>
+            </form>
+
+            <form class="form-generator hide">
+                <div class="row title">
+                    <div class="title-icon"></div>
+                    <div>Choisir les amendements à exporter:</div>
+                </div>
+
+                <div class="row">
+                    <div id="amendments-checkboxes"></div>
+                </div>
+
+                <div class="row">
+                    <div class="medium-12 columns">
+                        <button class="large expanded button" type="submit">Exporter</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="results"></div>
+        </div>
+    </div>
+
+</body>
+<script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+</script>
+
+</html>
