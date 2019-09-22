@@ -39,7 +39,8 @@ module.exports = class Scraper {
 
 	async getVotes(query) {
 		let { amendmentIds = [], year = '2019', month = '02', day = '14', pv = '8' } = query || {};
-		let meps = await this.getMepsList();
+
+		let meps = await this.getMepsList({ year: year, month: month });
 
 		let xml = await request({ method: 'GET', url: `${this.ENDPOINT}/RegData/seance_pleniere/proces_verbal/${year}/${month}-${day}/liste_presence/P${pv}_PV(${year})${month}-${day}(RCV)_XC.xml` });
 
@@ -98,9 +99,13 @@ module.exports = class Scraper {
 	}
 
 	getMepsList(options) {
-		let { year = '2018' } = options || {};
+		let { year = '2014', month = '01' } = options || {};
+		let kind = '2014';
+
+		if ((parseInt(year, 10) === 2019 && parseInt(month, 10) >= 5) || parseInt(year, 10) > 2019) kind = '2019';
+
 		return new Promise((resolve, reject) => {
-			fs.readFile(`${__dirname}/mep_${year}.json`, function (err, data) {
+			fs.readFile(`${__dirname}/datasets/mep_${kind}.json`, function (err, data) {
 				let meps = JSON.parse(data);
 				if (err) return reject(err);
 				if (!meps || !Array.isArray(meps) || meps.length === 0) return reject();
