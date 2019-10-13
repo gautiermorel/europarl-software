@@ -14,14 +14,13 @@
     "electron-progressbar": "^1.2.0",
     "pdf-parser": "^1.0.5",
     "pdf2json": "^1.1.8",
-    "request-promise-native": "^1.0.7",
+    "request": "^2.88.0",
     "xlsx": "^0.14.3",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "electron-installer-dmg": "^3.0.0",
-    "electron-packager": "^7.3.0",
-    "electron-prebuilt": "^1.2.0",
+    "electron-installer-dmg": "3.0.0",
+    "electron-packager": "14.0.5",
     "electron-winstaller": "^4.0.0",
     "eslint": "^3.1.1",
     "eslint-config-airbnb": "^9.0.1",

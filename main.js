@@ -21,9 +21,14 @@ function createWindow() {
 function handleSubmission() {
 	ipcMain.on('did-submit-form-get-amendments', (event, args) => {
 		let progressBar = new ProgressBar({
-			title: 'Récupération des données disponibles...',
 			text: 'Récupération des données disponibles...',
-			detail: 'En cours...'
+			detail: 'En cours...',
+			browserWindow: {
+				parent: mainWindow,
+				webPreferences: {
+					nodeIntegration: true
+				}
+			}
 		});
 
 		progressBar.on('completed', () => { progressBar = null });
@@ -44,7 +49,17 @@ function handleSubmission() {
 	ipcMain.on('did-submit-form-get-votes', (event, amendments, args) => {
 		let downloadsFolder = app.getPath('downloads');
 
-		let progressBar = new ProgressBar({ title: "Génération du fichier d'export...", text: "Génération du fichier d'export...", detail: 'En cours...' });
+		let progressBar = new ProgressBar({
+			text: "Génération du fichier d'export...",
+			detail: 'En cours...',
+			browserWindow: {
+				parent: mainWindow,
+				webPreferences: {
+					nodeIntegration: true
+				}
+			}
+		});
+
 		progressBar.on('completed', () => { progressBar = null });
 
 		scraper.getVotes(Object.assign({ amendmentIds: amendments.map(a => a.id) }, args))

@@ -13,12 +13,14 @@ const selectDay = document.getElementById('day-select');
 const selectPv = document.getElementById('pv-select');
 
 const YEARS = [
+	{ name: '2019', value: '2019' },
 	{ name: '2020', value: '2020' },
 	{ name: '2019', value: '2019' },
 	{ name: '2018', value: '2018' }
 ]
 
 const MONTHS = [
+	{ name: 'Février', value: '02' },
 	{ name: 'Décembre', value: '12' },
 	{ name: 'Novembre', value: '11' },
 	{ name: 'Octobre', value: '10' },
@@ -34,6 +36,7 @@ const MONTHS = [
 ]
 
 const DAYS = [
+	{ name: '14', value: '14' },
 	{ name: '31', value: '31' },
 	{ name: '30', value: '30' },
 	{ name: '29', value: '29' },
@@ -68,6 +71,7 @@ const DAYS = [
 ]
 
 const PVS = [
+	{ name: 'Proposition #8', value: '8' },
 	{ name: 'Proposition #1', value: '1' },
 	{ name: 'Proposition #2', value: '2' },
 	{ name: 'Proposition #3', value: '3' },
