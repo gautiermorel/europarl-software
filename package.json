@@ -1,13 +1,15 @@
 {
-  "name": "Europarl",
+  "name": "europarl",
   "version": "0.1.0",
   "productName": "Europarl",
-  "description": "Helper to generate CSV file from PDF results of votes.",
+  "description": "European tool to retrive plenary seance vote results",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-packager . --platform=darwin --arch=x64 --overwrite --icon './assets/icns/europarl.icns'",
-    "deploy": "electron-installer-dmg ./europarl-darwin-x64/europarl.app europarl --icon './assets/icns/europarl-dmg.icns'"
+    "deploy": "electron-installer-dmg ./europarl-darwin-x64/europarl.app europarl --icon './assets/icns/europarl-dmg.icns' --electronVersion 6.0.10",
+    "build-win": "electron-packager . europarl --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/ico/europarl.ico --prune=true --out=release-builds --version-string.CompanyName=CIWIG --version-string.FileDescription=CE --version-string.ProductName='Europarl' --electronVersion 6.0.10",
+    "deploy-win": "node ./windows-installer.js"
   },
   "author": "Gautier Morel",
   "dependencies": {
